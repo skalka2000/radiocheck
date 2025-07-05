@@ -4,7 +4,7 @@ function App() {
   const [artists, setArtists] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:8000/api/top-artists")
+    fetch("https://radiocheck-frontend.onrender.com/api/top-artists")
       .then((res) => res.json())
       .then((data) => {
         if (data.artists) setArtists(data.artists);
@@ -21,7 +21,7 @@ function App() {
       formData.append("file", file);
 
       try {
-        const res = await fetch("http://localhost:8000/api/upload", {
+        const res = await fetch("https://radiocheck-frontend.onrender.com/api/upload", {
           method: "POST",
           body: formData,
         });
@@ -37,7 +37,7 @@ function App() {
 
     alert("All uploads complete. Refreshing stats...");
 
-    const updated = await fetch("http://localhost:8000/api/top-artists").then((res) =>
+    const updated = await fetch("https://radiocheck-frontend.onrender.com/api/top-artists").then((res) =>
       res.json()
     );
     if (updated.artists) setArtists(updated.artists);
