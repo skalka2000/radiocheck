@@ -1,16 +1,18 @@
 import { useEffect, useState } from "react";
 
 function App() {
+  const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:8000";
+
   const [artists, setArtists] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:8000/api/top-artists")
+    fetch(`${API_BASE}/api/top-artists`)
       .then((res) => res.json())
       .then((data) => {
         if (data.artists) setArtists(data.artists);
       })
       .catch((err) => console.error("Error fetching artists:", err));
-  }, []);
+  }, [API_BASE]);
 
   const handleUpload = async (e) => {
     const files = e.target.files;
@@ -21,7 +23,7 @@ function App() {
       formData.append("file", file);
 
       try {
-        const res = await fetch("http://localhost:8000/api/upload", {
+        const res = await fetch(`${API_BASE}/api/upload`, {
           method: "POST",
           body: formData,
         });
@@ -37,12 +39,11 @@ function App() {
 
     alert("All uploads complete. Refreshing stats...");
 
-    const updated = await fetch("http://localhost:8000/api/top-artists").then((res) =>
+    const updated = await fetch(`${API_BASE}/api/top-artists`).then((res) =>
       res.json()
     );
     if (updated.artists) setArtists(updated.artists);
   };
-
 
   return (
     <div style={{ padding: "2rem" }}>
