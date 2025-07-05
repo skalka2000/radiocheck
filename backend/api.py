@@ -24,13 +24,10 @@ def ping():
 
 @app.get("/api/top-artists")
 def top_artists():
-    print("Request received for top artists")
     try:
-        print(f"Cache Directory: {CACHE_DIR}")
         file_path = os.path.join(CACHE_DIR, "top_artists.json")
         with open(file_path, "r", encoding="utf-8") as f:
             data = json.load(f)
-        print(data)
         return {"artists": data}
     except FileNotFoundError:
         return {"error": "top_artists.json not found"}
@@ -40,8 +37,6 @@ import shutil
 
 @app.post("/api/upload")
 async def upload_spotify_file(file: UploadFile = File(...)):
-    print(f"Base Directory: {BASE_DIR}")
-    print(f"Raw Data Directory: {RAW_DATA_DIR}")
 
     os.makedirs(RAW_DATA_DIR, exist_ok=True)
     print()
