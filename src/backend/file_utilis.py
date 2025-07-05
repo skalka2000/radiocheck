@@ -15,7 +15,7 @@ def merge_json_files(folder_path):
     print(f"Total plays loaded: {len(all_plays)}")
 
     # Save merged result
-    with open('spotify_data/merged_streaming_history.json', 'w', encoding='utf-8') as f:
+    with open('../spotify_data/merged_streaming_history.json', 'w', encoding='utf-8') as f:
         json.dump(all_plays, f, indent=2)
 
     print("Merged JSON saved to spotify_data/merged_streaming_history.json")
@@ -29,7 +29,7 @@ def filter_short_plays(play_data, threshold_seconds=30):
     print(f"Filtered out {len(play_data) - len(filtered)} plays under {threshold_seconds} seconds")
     return filtered
 
-def create_song_database(data, output_path='spotify_data/song_database.json'):
+def create_song_database(data, output_path='../spotify_data/song_database.json'):
     # Create database for all unique songs played
     song_database = {}
     for entry in data:
@@ -57,7 +57,7 @@ def create_song_database(data, output_path='spotify_data/song_database.json'):
     return song_database
 
 # Create song database from merged data
-def prepare_data(folder_path='spotify_raw_data/'):
+def prepare_data(folder_path='../spotify_raw_data/'):
     # Merge all JSON files in the folder
     merged_data = merge_json_files(folder_path)
 

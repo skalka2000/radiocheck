@@ -3,7 +3,7 @@ import json
 from collections import Counter
 from backend.file_utilis import merge_json_files, filter_short_plays
 
-folder_path = 'spotify_data/'
+folder_path = '../spotify_data/'
 filename =  "merged_streaming_history.json"
 
 with open(os.path.join(folder_path, filename), 'r', encoding='utf-8') as f:
@@ -35,5 +35,5 @@ def get_top_artists(data, top_n=20):
 # Example usage:
 top_artists = get_top_artists(data, top_n=20)
 print("Top 20 most streamed artists (by plays):\n")
-for rank, (artist, count) in enumerate(top_artists, 1):
-    print(f"{rank}. {artist} – {count} plays")
+for rank, artist_info in enumerate(top_artists, 1):
+    print(f"{rank}. {artist_info['name']} – {artist_info['play_count']} plays")

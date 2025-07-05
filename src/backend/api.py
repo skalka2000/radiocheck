@@ -20,7 +20,7 @@ def ping():
 @app.get("/api/top-artists")
 def top_artists():
     try:
-        with open("cache/top_artists.json", "r", encoding="utf-8") as f:
+        with open("../cache/top_artists.json", "r", encoding="utf-8") as f:
             data = json.load(f)
         return {"artists": data}
     except FileNotFoundError:
@@ -31,7 +31,7 @@ import shutil
 
 @app.post("/api/upload")
 async def upload_spotify_file(file: UploadFile = File(...)):
-    file_path = f"spotify_raw_data/{file.filename}"
+    file_path = f"../spotify_raw_data/{file.filename}"
     with open(file_path, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
 

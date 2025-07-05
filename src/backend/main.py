@@ -9,7 +9,13 @@ RAW_DIR = os.path.join(BASE_DIR, "../spotify_raw_data")
 SPOTIFY_DATA_DIR = os.path.join(BASE_DIR, "../spotify_data")
 CACHE_DIR = os.path.join(BASE_DIR, "../cache")
 
+
+
 def run_pipeline():
+    os.makedirs(RAW_DIR, exist_ok=True)
+    os.makedirs(SPOTIFY_DATA_DIR, exist_ok=True)
+    os.makedirs(CACHE_DIR, exist_ok=True)
+    
     merged_file_path = os.path.join(SPOTIFY_DATA_DIR, "merged_streaming_history.json")
     filtered_file_path = os.path.join(SPOTIFY_DATA_DIR, "filtered_streaming_history.json")
     song_db_path = os.path.join(SPOTIFY_DATA_DIR, "song_database.json")
