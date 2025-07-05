@@ -4,6 +4,7 @@
 **/venv/
 .cache
 **/.cache
+cache/
 /__pycache__
 **/__pycache__/
 *.pyc
@@ -11,3 +12,5 @@
 *.pyd
 backend/cache/
 .json
+spotify_data/
+spotify_raw_data/

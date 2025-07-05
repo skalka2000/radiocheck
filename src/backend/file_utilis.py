@@ -2,9 +2,6 @@ import json
 import os
 
 def merge_json_files(folder_path):
-    # Folder containing JSON files
-    # folder_path = 'spotify_raw_data/'
-
     # Container for all plays
     all_plays = []
 

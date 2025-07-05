@@ -25,3 +25,18 @@ def top_artists():
         return {"artists": data}
     except FileNotFoundError:
         return {"error": "top_artists.json not found"}
+    
+from fastapi import UploadFile, File
+import shutil
+
+@app.post("/api/upload")
+async def upload_spotify_file(file: UploadFile = File(...)):
+    file_path = f"spotify_raw_data/{file.filename}"
+    with open(file_path, "wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+
+    # Call your processing logic
+    from backend.main import run_pipeline
+    run_pipeline()
+
+    return {"status": "success"}

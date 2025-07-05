@@ -12,9 +12,46 @@ function App() {
       .catch((err) => console.error("Error fetching artists:", err));
   }, []);
 
+  const handleUpload = async (e) => {
+    const files = e.target.files;
+    if (!files.length) return;
+
+    for (const file of files) {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      try {
+        const res = await fetch("http://localhost:8000/api/upload", {
+          method: "POST",
+          body: formData,
+        });
+
+        if (!res.ok) {
+          alert(`Upload failed for ${file.name}`);
+        }
+      } catch (error) {
+        console.error(`Upload error for ${file.name}:`, error);
+        alert(`Upload error for ${file.name}`);
+      }
+    }
+
+    alert("All uploads complete. Refreshing stats...");
+
+    const updated = await fetch("http://localhost:8000/api/top-artists").then((res) =>
+      res.json()
+    );
+    if (updated.artists) setArtists(updated.artists);
+  };
+
+
   return (
-    <div>
+    <div style={{ padding: "2rem" }}>
       <h1>Top Artists</h1>
+
+      <input type="file" accept=".json" multiple onChange={handleUpload} />
+      <br />
+      <br />
+
       <ol>
         {artists.map((artist, i) => (
           <li key={i} style={{ listStyleType: "decimal" }}>
