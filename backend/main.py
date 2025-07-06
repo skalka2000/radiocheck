@@ -15,25 +15,14 @@ def run_pipeline():
     os.makedirs(RAW_DIR, exist_ok=True)
     os.makedirs(SPOTIFY_DATA_DIR, exist_ok=True)
     os.makedirs(CACHE_DIR, exist_ok=True)
-    print(f"Base directory: {BASE_DIR}")
-    print(f"Raw data directory: {RAW_DIR}")
-    print(f"Spotify data directory: {SPOTIFY_DATA_DIR}")
-    print(f"Cache directory: {CACHE_DIR}")
     
     merged_file_path = os.path.join(SPOTIFY_DATA_DIR, "merged_streaming_history.json")
     filtered_file_path = os.path.join(SPOTIFY_DATA_DIR, "filtered_streaming_history.json")
     song_db_path = os.path.join(SPOTIFY_DATA_DIR, "song_database.json")
     top_artists_cache_path = os.path.join(CACHE_DIR, "top_artists.json")
 
-    # # Check if the merged data file exists, if not, prepare the data
-    # if "merged_streaming_history.json" not in os.listdir(SPOTIFY_DATA_DIR):
-        # print("Merged data not found, preparing data...")
     merged_data = prepare_data(folder_path=RAW_DIR)
     print(f"Merged data created with {len(merged_data)} entries from {RAW_DIR}.")
-    # else:
-    #     print("Loading existing merged data...")
-    #     with open(merged_file_path, 'r', encoding='utf-8') as f:
-    #         merged_data = json.load(f)
     
     # Filter out plays shorter than 30 seconds
     filtered_data = filter_short_plays(merged_data, threshold_seconds=30)
@@ -52,10 +41,10 @@ def run_pipeline():
     from analyse_data import get_top_artists
     top_artists = get_top_artists(filtered_data, top_n=20)
     
-    # Save Top Artists to cache
-    with open(top_artists_cache_path, 'w', encoding='utf-8') as f:
-        json.dump(top_artists, f, indent=2)
-        print(f"Top artists saved to {top_artists_cache_path}")
+    # # Save Top Artists to cache
+    # with open(top_artists_cache_path, 'w', encoding='utf-8') as f:
+    #     json.dump(top_artists, f, indent=2)
+    #     print(f"Top artists saved to {top_artists_cache_path}")
 
 def main():
     print("Starting the Spotify data processing pipeline...")

@@ -2,9 +2,6 @@ import json
 import os
 
 def merge_json_files(folder_path):
-    print("MERGE: reading folder_path=", folder_path)
-    print("MERGE: contains files:", os.listdir(folder_path))
-
     # Container for all plays
     all_plays = []
 
@@ -21,7 +18,7 @@ def merge_json_files(folder_path):
     with open('../spotify_data/merged_streaming_history.json', 'w', encoding='utf-8') as f:
         json.dump(all_plays, f, indent=2)
 
-    print("Merged JSON saved to spotify_data/merged_streaming_history.json")
+    print("Merged JSON saved to ../spotify_data/merged_streaming_history.json")
     return all_plays
 
 def filter_short_plays(play_data, threshold_seconds=30):
@@ -52,10 +49,11 @@ def create_song_database(data, output_path='../spotify_data/song_database.json')
                 "timestamp": entry.get("ts"),
             }
 
+    if len(song_database) == 0:
+        raise ValueError("No valid songs found in the provided data.")
     # Save the song database to a JSON file
     with open(output_path, 'w', encoding='utf-8') as f:
         json.dump(song_database, f, indent=2)
-
     print(f"Song database created with {len(song_database)} unique tracks.")
     return song_database
 
@@ -63,6 +61,9 @@ def create_song_database(data, output_path='../spotify_data/song_database.json')
 def prepare_data(folder_path='../spotify_raw_data/'):
     # Merge all JSON files in the folder
     merged_data = merge_json_files(folder_path)
+
+    if not merged_data:
+        raise ValueError("No valid data found in the specified folder.")
 
     # Create song database
     create_song_database(merged_data)

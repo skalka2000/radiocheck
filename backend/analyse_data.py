@@ -27,6 +27,8 @@ def get_top_artists(data, top_n=20):
         artist = entry.get('master_metadata_album_artist_name')
         if artist:
             artist_counter[artist] += 1
+    if len(artist_counter) == 0:
+        raise ValueError("No valid artists found in the provided data.")
     return [
         {"name": artist, "play_count": count}
         for artist, count in artist_counter.most_common(top_n)
