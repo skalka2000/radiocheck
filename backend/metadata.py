@@ -6,89 +6,48 @@ from spotify_auth import authenticate_spotify
 import time
 
 
-def find_spotify_tracks_by_uri(sp, uri):
+
+def fetch_spotify_track_metadata(data, sp, output_path='../spotify_data/track_metadata.json', batch_size=50):
     """
-    Find a track/tracks on Spotify by their URI.
+    Fetches track metadata from Spotify for all tracks in data and saves it to a JSON file.
+
+    Args:
+        data (dict): Dictionary where keys are 'spotify_track_uri'.
+        sp: Authenticated Spotify client.
+        output_path (str): Path to save the metadata JSON.
+        batch_size (int): Number of URIs to fetch per batch.
     """
-    # Check if the URI is provided
-    if not uri:
-        print("No URI provided.")
-        return None
-    # Check URI type (single string or list of strings)
-    if isinstance(uri, str):
-        uri = [uri] # Convert to list if it's a single string
-    # Check if URI is correctly formatted
+    uris_to_fetch = list(data.keys())
+    total = len(uris_to_fetch)
+    print(f"Total unique track URIs in data: {total}")
 
-    
-    try:
-        track = sp.track(uri)
-        return track
-    except Exception as e:
-        print(f"Error fetching track for URI {uri}: {e}")
-        return None
+    track_metadata = {}
+    print("Starting to fetch track metadata...")
 
-sp = authenticate_spotify()
-# Prepare and load the data
-if "filtered_streaming_history.json" not in os.listdir('spotify_data/'):
-    print("Filtered data not found, preparing data...")
-    data = prepare_data(folder_path='spotify_raw_data/')
-else:
-    print("Loading existing filtered data...")
-    with open('spotify_data/filtered_streaming_history.json', 'r', encoding='utf-8') as f:
-        data = json.load(f)    
+    for i in range(0, total, batch_size):
+        batch = uris_to_fetch[i:i + batch_size]
+        try:
+            results = sp.tracks(batch)
+            for track in results['tracks']:
+                if track:  # Track might be None if URI is invalid
+                    track_id = track['id']
+                    if track_id in data:
+                        track_metadata[track_id] = track
 
-# Create metadata for all songs
-# Count the number of track entries
-total = len(data)
-print(f"Total tracks in data: {len(data)}")
+        except Exception as e:
+            print(f"Error fetching batch {i}-{i+batch_size}: {e}")
 
-seen=0
+        time.sleep(0.1)  # Throttle to ~10 requests/sec if needed   
 
-track_metadata = {}
-start_time = time.time()
+    print(f"Found metadata for {len(track_metadata)} unique tracks.")
 
-# Iterate through the data and find metadata for each track
-print("Starting to fetch track metadata...")
-for entry in data:
-    uri = entry.get("spotify_track_uri")
-    if not uri or uri in track_metadata:
-        seen += 1
-        if seen % 100 == 0:
-            print(f"Processed {seen}/{total} tracks. {seen/total*100:.2f}% complete.")
-            # Display time elapsed for processing last 100 tracks
-            elapsed = time.time() - start_time
-            print(f"Time elapsed for last 100 tracks: {elapsed:.2f} seconds)")
-            # Reset start time for next 100 tracks
-            start_time = time.time()
-        continue
+    # Print first 10 keys
+    print("Sample track metadata keys:", list(track_metadata.keys())[:10])
 
-    track = find_song_spotify_by_uri(sp, uri)
-    if track:
-        time.sleep(0.1)  # 10 requests/sec
-        track_metadata[uri] = track
- 
-    
-
-# Print the number of unique tracks found
-print(f"Found metadata for {len(track_metadata)} unique tracks.")
-
-# Save the track metadata to a JSON file
-with open('spotify_data/track_metadata.json', 'w', encoding='utf-8') as f:
-    json.dump(track_metadata, f, indent=2)
+    with open(output_path, 'w', encoding='utf-8') as f:
+        json.dump(track_metadata, f, indent=2)
 
 
-# for entry in data[0:100]:
-#     if "spotify_track_uri" in entry:
-#         uri = entry["spotify_track_uri"]
-#         track = find_song_spotify_by_uri(sp, uri)
-#         if track:
-#             entry["artists_ids"] = [artist['id'] for artist in track['artists']]
-#         else:
-#             Exception(f"Track not found for URI: {uri}")
-
-# # Save the updated data with artist IDs
-# with open('spotify_data/filtered_streaming_history_with_artist_ids.json', 'w', encoding='utf-8') as f:
-#     json.dump(data, f, indent=2)
 
             
 

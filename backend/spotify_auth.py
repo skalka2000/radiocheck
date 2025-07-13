@@ -12,12 +12,18 @@ def authenticate_spotify():
     Authenticate with Spotify using client credentials.
     Returns a Spotify client instance.
     """
+    print("Authenticating with Spotify...")
+
+    # Load environment variables
+    load_dotenv()
+    
     # Ensure environment variables are loaded
     if not os.getenv("SPOTIFY_CLIENT_ID") or not os.getenv("SPOTIFY_CLIENT_SECRET"):
         raise ValueError("Spotify client ID and secret must be set in environment variables.")
 
-    # Load environment variables
-    load_dotenv()
+
+
+    print("Loading Spotify credentials from environment variables...")
 
     # Get credentials from environment variables
     client_id = os.getenv("SPOTIFY_CLIENT_ID")
@@ -28,7 +34,9 @@ def authenticate_spotify():
         client_id=client_id,
         client_secret=client_secret
     ))
-
+    if not sp:
+        raise Exception("Failed to authenticate with Spotify. Check your client ID and secret.")
+    print(sp)
     return sp
 
 # # Load environment variables
